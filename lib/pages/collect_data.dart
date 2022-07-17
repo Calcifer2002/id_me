@@ -28,8 +28,9 @@ File? imageFileID;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Padding(
-            padding: const EdgeInsets.only(left: 100, right: 50),
+        body: Center(
+          child:SingleChildScrollView(
+
             child: Column(children: [
               SizedBox(height: 100,),
 
@@ -106,7 +107,7 @@ File? imageFileID;
                 },
                 child: Text("SEND TO VERIFY", style: TextStyle(fontSize: 20)),
               ),
-            ])),
+            ]))),
         floatingActionButton: Padding(
             padding: const EdgeInsets.only(left: 30),
             child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
