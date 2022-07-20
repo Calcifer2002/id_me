@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -19,8 +20,12 @@ class Collectdata extends StatefulWidget {
 class _CollectdataState extends State<Collectdata> {
   File? imageFileFace;
   File? imageFileID;
+  String? idlink;
+  String? facelink;
+  final FirebaseAuth auth = FirebaseAuth.instance;
   String folderFace = "Face";
   String folderID = "ID";
+   FirebaseDatabase Databaseref = FirebaseDatabase.instance;
   FirebaseFirestore firestoreRef = FirebaseFirestore.instance;
   FirebaseStorage firebaseStorageRef = FirebaseStorage.instance;
 
@@ -31,6 +36,7 @@ class _CollectdataState extends State<Collectdata> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         body: Center(
             child: SingleChildScrollView(
@@ -103,6 +109,7 @@ class _CollectdataState extends State<Collectdata> {
             onPressed: () async {
               _uploadImageFace();
               _uploadImageID();
+
             },
             child: Text("SEND TO VERIFY", style: TextStyle(fontSize: 20)),
           ),
@@ -147,6 +154,7 @@ class _CollectdataState extends State<Collectdata> {
   }
 
   _uploadImageFace() async {
+
     var key = firestoreRef.collection(folderFace);
     String uploadFaceName =
         DateTime.now().millisecondsSinceEpoch.toString() + "jpg";
@@ -161,7 +169,13 @@ class _CollectdataState extends State<Collectdata> {
     });
     await uploadTask.whenComplete(() async{
       var uploadlink = await uploadTask.snapshot.ref.getDownloadURL();
-      print(uploadlink);
+
+      facelink = uploadlink;
+      final User? user = auth.currentUser;
+      final uid = user!.uid;
+      final reflinks = Databaseref.ref().child(uid).child("Face");
+
+      await reflinks.set(facelink);
     });
   }
   _uploadImageID() async {
@@ -179,8 +193,17 @@ class _CollectdataState extends State<Collectdata> {
     });
     await uploadTask.whenComplete(() async{
       var uploadlink = await uploadTask.snapshot.ref.getDownloadURL();
-      print(uploadlink);
+
+      idlink = uploadlink;
+
     });
+    final User? user = auth.currentUser;
+    final uid = user!.uid;
+    final reflinks = Databaseref.ref().child(uid).child("ID");
+    final statuslinks = Databaseref.ref().child(uid).child("Status");
+    await reflinks.set(idlink);
+    await statuslinks.set("Unapproved");
+
   }
 
   void getImageID({required ImageSource source}) async {
