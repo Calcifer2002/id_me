@@ -25,9 +25,10 @@ class _CollectdataState extends State<Collectdata> {
   final FirebaseAuth auth = FirebaseAuth.instance;
   String folderFace = "Face";
   String folderID = "ID";
-   FirebaseDatabase Databaseref = FirebaseDatabase.instance;
+   FirebaseDatabase Database = FirebaseDatabase.instance;
   FirebaseFirestore firestoreRef = FirebaseFirestore.instance;
   FirebaseStorage firebaseStorageRef = FirebaseStorage.instance;
+  late DatabaseReference databaseReference ;
 
   //
 
@@ -173,7 +174,11 @@ class _CollectdataState extends State<Collectdata> {
       facelink = uploadlink;
       final User? user = auth.currentUser;
       final uid = user!.uid;
-      final reflinks = Databaseref.ref().child(uid).child("Face");
+      final reflinks = Database.ref().child(uid).child("Face");
+      var snapshot = await reflinks.get();
+      var prev = snapshot.value;
+      print(prev);
+      await reflinks.set(prev.toString() + ", " + facelink.toString());
 
       await reflinks.set(facelink);
     });
@@ -199,9 +204,12 @@ class _CollectdataState extends State<Collectdata> {
     });
     final User? user = auth.currentUser;
     final uid = user!.uid;
-    final reflinks = Databaseref.ref().child(uid).child("ID");
-    final statuslinks = Databaseref.ref().child(uid).child("Status");
-    await reflinks.set(idlink);
+    final reflinks = Database.ref().child(uid).child("ID");
+    final statuslinks = Database.ref().child(uid).child("Status");
+    var snapshot = await reflinks.get();
+    var prev = snapshot.value;
+    print(prev);
+    await reflinks.set(prev.toString() + ", " + idlink.toString());
     await statuslinks.set("Unapproved");
 
   }
