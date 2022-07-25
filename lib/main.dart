@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:id_me/pages/collect_data.dart';
+import 'package:id_me/pages/home_page.dart';
 import 'package:id_me/pages/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 Future<void> main() async {
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: Collectdata(),
+      home: LoginScreen(),
     );
   }
 }

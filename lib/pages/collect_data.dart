@@ -133,7 +133,11 @@ class _CollectdataState extends State<Collectdata> {
               ),
               Expanded(child: Container()),
               FloatingActionButton(
-                onPressed: () async {},
+                onPressed: () async {
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) =>   Homepage()));
+
+                },
                 child: Icon(Icons.arrow_back),
               ),
             ])));
