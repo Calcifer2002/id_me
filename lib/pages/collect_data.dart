@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,6 +6,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:id_me/pages/home_page.dart';
@@ -167,11 +170,7 @@ class _CollectdataState extends State<Collectdata> {
         firebaseStorageRef.ref().child(folderFace).child(uploadFaceName);
     UploadTask uploadTask = reference.putFile(File(imageFileFace!.path));
 
-    uploadTask.snapshotEvents.listen((event) {
-      print(event.bytesTransferred.toString() +
-          " " +
-          event.totalBytes.toString());
-    });
+    uploadTask.snapshotEvents.listen((event) { });
     await uploadTask.whenComplete(() async{
       var uploadlink = await uploadTask.snapshot.ref.getDownloadURL();
 
@@ -187,6 +186,25 @@ class _CollectdataState extends State<Collectdata> {
       await reflinks.set(facelink);
     });
   }
+  Future<String?> shortenUrl({required String url}) async {
+    try{
+      final result = await http.post(
+          Uri.parse('https://cleanuri.com/api/v1/shorten'),
+          body: {
+            'url': url
+          }
+      );
+
+      if(result.statusCode == 200){
+        final jsonResult = jsonDecode(result.body);
+        return jsonResult['result_url'];
+      }
+    }catch (e){
+      print('Error ${e.toString()}');
+    }
+    return null;
+  }
+
   _uploadImageID() async {
     var key = firestoreRef.collection(folderID);
     String uploadFaceID =

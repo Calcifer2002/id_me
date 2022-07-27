@@ -18,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final phoneController = TextEditingController();
   String? verificationID;
   bool showloading = false;
+
   void signInAuthCreds(PhoneAuthCredential phoneAuthCreds) async{
     setState(() {
       showloading= true;
@@ -101,7 +102,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   presentState = NumberVerification.SHOW_OTP_FORM_STATE;
                   this.verificationID = verificationID;
                 });},
-                codeAutoRetrievalTimeout: (verificationID) async {});
+                codeAutoRetrievalTimeout: (verificationID) async {
+
+
+                });
           },
           child: Text("Send OTP"),
         ),
@@ -109,11 +113,11 @@ class _LoginScreenState extends State<LoginScreen> {
       ],
     );
   }
-  final GlobalKey<ScaffoldState> _globalKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key:_globalKey,
+
         body: Container(
           child: showloading? Center(child: CircularProgressIndicator(),):presentState == NumberVerification.SHOW_MOBILE_FORM_STATE
               ? getphnumberwidget(context)
