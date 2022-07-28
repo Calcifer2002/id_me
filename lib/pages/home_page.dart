@@ -1,6 +1,7 @@
 
 import 'dart:io';
 import 'dart:math';
+import 'package:image_grid/image_grid.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,12 +17,14 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class Homepage extends StatefulWidget {
-  @override
+
   _HomepageState createState() => _HomepageState();
 }
 
 class _HomepageState extends State<Homepage> {
   final Dio dio = Dio();
+  late String imagePath;
+   List<String> idslist = [];
   bool loading = false;
   double progress = 0;
   final _auth = FirebaseAuth.instance;
@@ -29,6 +32,12 @@ class _HomepageState extends State<Homepage> {
   FirebaseFirestore firestoreRef = FirebaseFirestore.instance;
   FirebaseStorage firebaseStorageRef = FirebaseStorage.instance;
   late DatabaseReference databaseReference;
+  @override
+  initState() {         // this is called when the class is initialized or called for the first time
+    super.initState();
+    downloadFile();
+    print(idslist);//  this is the material super constructor for init state to link your instance initState to the global initState context
+  }
   Future<bool> saveImage(String url, String fileName) async {
     Directory directory;
     try {
@@ -47,6 +56,7 @@ class _HomepageState extends State<Homepage> {
             }
           }
           newPath = newPath + "/Verif-ID";
+          imagePath = newPath;
           directory = Directory(newPath);
         } else {
           return false;
@@ -81,6 +91,19 @@ class _HomepageState extends State<Homepage> {
       return false;
     }
   }
+  Future<File> get localfile async{
+    final path=imagePath;
+    return File(path);
+  }
+  Future<String> readData() async{
+    try{
+      final file=await localfile;
+      String image_path=await file.readAsString();
+      print(image_path);
+      return image_path;
+    }
+    catch(e) {return e.toString();}
+  }
 
   Future<bool> _requestPermission(Permission permission) async {
     if (await permission.isGranted) {
@@ -95,6 +118,7 @@ class _HomepageState extends State<Homepage> {
   }
 
   downloadFile() async {
+
     final User? user = _auth.currentUser;
     final uid = user!.uid;
     final reflinks = Database.ref().child(uid).child("Status");
@@ -103,12 +127,15 @@ class _HomepageState extends State<Homepage> {
     var snapshot = await reflinks.get();
     var prev = snapshot.value;
     var ids = idsnapshots.value;
-    List <String>idslist = ids.toString().split(", ");
-    print(idslist);
+    idslist = ids.toString().split(", ");
+
+
     var ran = Random();
     for (int i = 0; i < idslist.length; i ++){
       await saveImage(idslist[i],(ran.nextInt(10000)).toString() + ".jpg");
+
     }
+
 
 
 
@@ -117,28 +144,10 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: loading
-            ? Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: LinearProgressIndicator(
-            minHeight: 10,
-            value: progress,
-          ),
-        )
-            : FlatButton.icon(
-            icon: Icon(
-              Icons.download_rounded,
-              color: Colors.white,
-            ),
-            color: Colors.blue,
-            onPressed: downloadFile,
-            padding: const EdgeInsets.all(10),
-            label: Text(
-              "Download Video",
-              style: TextStyle(color: Colors.white, fontSize: 25),
-            )),
-      ),
+      body: ListView.builder(itemBuilder: (BuildContext ctx, int index){
+return Padding(padding: const EdgeInsets.all(20), child :Column(children:<Widget> [Image.network(idslist[index]),],)
+
+);}, itemCount: idslist.length,)
     );
   }
 }
