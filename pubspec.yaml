@@ -48,6 +48,7 @@ dependencies:
   permission_handler: ^10.0.0
   image_gallery_saver: ^1.7.1
   image_grid: ^0.0.7+3
+  google_fonts: ^3.0.1
 
 dev_dependencies:
   flutter_test:
@@ -75,6 +76,7 @@ flutter:
   assets:
      - assets/images/wood-gdd9aaff3e_1920.jpg
      - assets/images/user-1808597.png
+     - assets/images/hand-3469618_640.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
