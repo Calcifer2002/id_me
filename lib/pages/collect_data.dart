@@ -28,10 +28,10 @@ class _CollectdataState extends State<Collectdata> {
   final FirebaseAuth auth = FirebaseAuth.instance;
   String folderFace = "Face";
   String folderID = "ID";
-   FirebaseDatabase Database = FirebaseDatabase.instance;
+  FirebaseDatabase Database = FirebaseDatabase.instance;
   FirebaseFirestore firestoreRef = FirebaseFirestore.instance;
   FirebaseStorage firebaseStorageRef = FirebaseStorage.instance;
-  late DatabaseReference databaseReference ;
+  late DatabaseReference databaseReference;
 
   //
 
@@ -40,7 +40,6 @@ class _CollectdataState extends State<Collectdata> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         body: Center(
             child: SingleChildScrollView(
@@ -54,10 +53,9 @@ class _CollectdataState extends State<Collectdata> {
                 height: 300,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.indigoAccent,
                   image: DecorationImage(
                       image: FileImage(imageFileFace!), fit: BoxFit.cover),
-                  border: Border.all(width: 8, color: Colors.black),
                   borderRadius: BorderRadius.circular(12.0),
                 ))
           else
@@ -66,16 +64,24 @@ class _CollectdataState extends State<Collectdata> {
               height: 250,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: Colors.blue,
-                border: Border.all(width: 8, color: Colors.black12),
+                color: Colors.indigoAccent,
                 borderRadius: BorderRadius.circular(12.0),
               ),
-            ),
-          TextButton(
+            ),SizedBox(
+                    height: 30,
+                  ),
+          ElevatedButton(
             onPressed: () async {
               getImageFace(source: ImageSource.camera);
             },
-            child: Text("Upload Face", style: TextStyle(fontSize: 20)),
+            style: ElevatedButton.styleFrom(
+              elevation: 12.0,
+              primary: Colors.black, // background
+              onPrimary: Colors.white, // foreground
+
+              textStyle: const TextStyle(color: Colors.white),
+            ),
+            child: const Text('Upload Face'),
           ),
           if (imageFileID != null)
             Container(
@@ -83,10 +89,10 @@ class _CollectdataState extends State<Collectdata> {
                 height: 300,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.indigoAccent,
                   image: DecorationImage(
                       image: FileImage(imageFileID!), fit: BoxFit.cover),
-                  border: Border.all(width: 8, color: Colors.black),
+
                   borderRadius: BorderRadius.circular(12.0),
                 ))
           else
@@ -95,27 +101,42 @@ class _CollectdataState extends State<Collectdata> {
               height: 250,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: Colors.blue,
-                border: Border.all(width: 8, color: Colors.black12),
+                color: Colors.indigoAccent,
                 borderRadius: BorderRadius.circular(12.0),
               ),
             ),
-          TextButton(
+          SizedBox(
+            height: 30,
+          ),
+          ElevatedButton(
             onPressed: () async {
               getImageID(source: ImageSource.camera);
             },
-            child: Text("Upload ID", style: TextStyle(fontSize: 20)),
+            style: ElevatedButton.styleFrom(
+              elevation: 12.0,
+              primary: Colors.black, // background
+              onPrimary: Colors.white, // foreground
+
+              textStyle: const TextStyle(color: Colors.white),
+            ),
+            child: const Text('Upload ID'),
           ),
           SizedBox(
             height: 30,
           ),
-          TextButton(
+          ElevatedButton(
             onPressed: () async {
-              _uploadImageFace();
               _uploadImageID();
-
+              _uploadImageFace();
             },
-            child: Text("SEND TO VERIFY", style: TextStyle(fontSize: 20)),
+            style: ElevatedButton.styleFrom(
+              elevation: 12.0,
+              primary: Colors.black, // background
+              onPrimary: Colors.white, // foreground
+
+              textStyle: const TextStyle(color: Colors.white),
+            ),
+            child: const Text('Send to verify'),
           ),
         ]))),
         floatingActionButton: Padding(
@@ -126,22 +147,24 @@ class _CollectdataState extends State<Collectdata> {
                   getImageFace(source: ImageSource.camera);
                 },
                 child: Icon(Icons.face_rounded),
+                backgroundColor: Colors.indigoAccent,
               ),
               SizedBox(width: 10),
               FloatingActionButton(
                 onPressed: () async {
                   getImageID(source: ImageSource.camera);
                 },
+                backgroundColor: Colors.indigoAccent,
                 child: Icon(Icons.add_card),
               ),
               Expanded(child: Container()),
               FloatingActionButton(
                 onPressed: () async {
                   Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) =>   Homepage()));
-
+                      MaterialPageRoute(builder: (context) => Homepage()));
                 },
                 child: Icon(Icons.arrow_back),
+                backgroundColor: Colors.indigoAccent,
               ),
             ])));
   }
@@ -162,7 +185,6 @@ class _CollectdataState extends State<Collectdata> {
   }
 
   _uploadImageFace() async {
-
     var key = firestoreRef.collection(folderFace);
     String uploadFaceName =
         DateTime.now().millisecondsSinceEpoch.toString() + "jpg";
@@ -170,8 +192,8 @@ class _CollectdataState extends State<Collectdata> {
         firebaseStorageRef.ref().child(folderFace).child(uploadFaceName);
     UploadTask uploadTask = reference.putFile(File(imageFileFace!.path));
 
-    uploadTask.snapshotEvents.listen((event) { });
-    await uploadTask.whenComplete(() async{
+    uploadTask.snapshotEvents.listen((event) {});
+    await uploadTask.whenComplete(() async {
       var uploadlink = await uploadTask.snapshot.ref.getDownloadURL();
 
       facelink = uploadlink;
@@ -186,20 +208,18 @@ class _CollectdataState extends State<Collectdata> {
       await reflinks.set(facelink);
     });
   }
+
   Future<String?> shortenUrl({required String url}) async {
-    try{
+    try {
       final result = await http.post(
           Uri.parse('https://cleanuri.com/api/v1/shorten'),
-          body: {
-            'url': url
-          }
-      );
+          body: {'url': url});
 
-      if(result.statusCode == 200){
+      if (result.statusCode == 200) {
         final jsonResult = jsonDecode(result.body);
         return jsonResult['result_url'];
       }
-    }catch (e){
+    } catch (e) {
       print('Error ${e.toString()}');
     }
     return null;
@@ -210,7 +230,7 @@ class _CollectdataState extends State<Collectdata> {
     String uploadFaceID =
         DateTime.now().millisecondsSinceEpoch.toString() + "jpg";
     Reference reference =
-    firebaseStorageRef.ref().child(folderID).child(uploadFaceID);
+        firebaseStorageRef.ref().child(folderID).child(uploadFaceID);
     UploadTask uploadTask = reference.putFile(File(imageFileFace!.path));
 
     uploadTask.snapshotEvents.listen((event) {
@@ -218,11 +238,10 @@ class _CollectdataState extends State<Collectdata> {
           " " +
           event.totalBytes.toString());
     });
-    await uploadTask.whenComplete(() async{
+    await uploadTask.whenComplete(() async {
       var uploadlink = await uploadTask.snapshot.ref.getDownloadURL();
 
       idlink = uploadlink;
-
     });
     final User? user = auth.currentUser;
     final uid = user!.uid;
@@ -233,7 +252,6 @@ class _CollectdataState extends State<Collectdata> {
     print(prev);
     await reflinks.set(prev.toString() + ", " + idlink.toString());
     await statuslinks.set("Unapproved");
-
   }
 
   void getImageID({required ImageSource source}) async {
