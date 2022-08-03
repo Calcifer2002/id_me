@@ -81,7 +81,7 @@ class _CollectdataState extends State<Collectdata> {
 
               textStyle: const TextStyle(color: Colors.white),
             ),
-            child: const Text('Upload Face'),
+            child: const Text('Upload ID'),
           ),
           if (imageFileID != null)
             Container(
@@ -119,7 +119,7 @@ class _CollectdataState extends State<Collectdata> {
 
               textStyle: const TextStyle(color: Colors.white),
             ),
-            child: const Text('Upload ID'),
+            child: const Text('Upload Face'),
           ),
           SizedBox(
             height: 30,
