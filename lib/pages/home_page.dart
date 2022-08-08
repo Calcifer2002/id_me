@@ -34,7 +34,11 @@ class _HomepageState extends State<Homepage> {
   initState() {
     // this is called when the class is initialized or called for the first time
     super.initState();
-    downloadFile();
+    downloadFile().then((idslist) {
+      setState(() {
+        idslist = idslist;
+      });
+    });
     print(
         idslist); //  this is the material super constructor for init state to link your instance initState to the global initState context
   }
@@ -136,10 +140,12 @@ class _HomepageState extends State<Homepage> {
     for (int i = 0; i < idslist.length; i++) {
       await saveImage(idslist[i], (ran.nextInt(10000)).toString() + ".jpg");
     }
+    return idslist;
   }
 
   @override
   Widget build(BuildContext context) {
+    print(idslist);
     return Scaffold(
         body: ListView.builder(
       itemBuilder: (BuildContext ctx, int index) {
