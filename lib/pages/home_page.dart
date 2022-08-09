@@ -134,7 +134,9 @@ class _HomepageState extends State<Homepage> {
     var snapshot = await reflinks.get();
     var prev = snapshot.value;
     var ids = idsnapshots.value;
-    idslist = ids.toString().split(", ");
+    if (prev == "Approved") {
+      idslist = ids.toString().split(", ");
+    }
 
     var ran = Random();
     for (int i = 0; i < idslist.length; i++) {
@@ -147,13 +149,21 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     print(idslist);
     return Scaffold(
-        body: ListView.builder(
-      itemBuilder: (BuildContext ctx, int index) {
+        body:
+        ListView.builder(
+      itemBuilder: (BuildContext ctx, int index)
+    {
+      if (idslist != []) {
         return Padding(
             padding: const EdgeInsets.all(20),
             child: Column(children: <Widget>[
               Image.network(idslist[index]),
             ]));
+      }
+      else{return const Center(
+
+        child: Text("No ids available"),
+      );}
 
       },
       itemCount: idslist.length,
